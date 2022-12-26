@@ -6,16 +6,25 @@ const configuration = new Configuration({
 });
 const AIbrain = new OpenAIApi(configuration);
 
-async function main() {
-    const response = await AIbrain.createCompletion({
-        model: "text-davinci-003",
-        prompt: "Write me a tutorial on setting up GPT-3 API",
-        max_tokens: 250,
-        temperature: 0,
-    });
+const readline = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-    const completion = response.data.choices[0].text
-    console.log(completion)
+async function main() {
+    readline.question("Ask anything: ", async (prompt) => {
+        const response = await AIbrain.createCompletion({
+            model: "text-davinci-003",
+            prompt: "Write me a tutorial on setting up GPT-3 API",
+            max_tokens: 250,
+            temperature: 0,
+        });
+
+        const completion = response.data.choices[0].text;
+        console.log(completion);
+
+        readline.close();
+    }); 
 }
 
 main();
