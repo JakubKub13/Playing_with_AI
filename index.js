@@ -12,19 +12,27 @@ const readline = require("readline").createInterface({
 });
 
 async function main() {
-    readline.question("Ask anything: ", async (prompt) => {
-        const response = await AIbrain.createCompletion({
-            model: "text-davinci-003",
-            prompt: "Write me a tutorial on setting up GPT-3 API",
-            max_tokens: 250,
-            temperature: 0,
+    while (true) {
+
+    readline.question("Ask anything (type q to quit): ", async (prompt) => {
+        if (prompt === "q") {
+            readline.close();
+            return;
+        }
+
+        readline.question("Enter the max number of tokens(length of output): ", async (max_tokens) => {
+            const response = await AIbrain.createCompletion({
+                model: "text-davinci-003",
+                prompt: prompt,
+                max_tokens: 50,
+                temperature: 0,
+            });
+
+            const completion = response.data.choices[0].text;
+            console.log(completion);
         });
-
-        const completion = response.data.choices[0].text;
-        console.log(completion);
-
-        readline.close();
     }); 
+  }
 }
 
 main();
