@@ -12,37 +12,79 @@ const readline = require("readline").createInterface({
     output: process.stdout
 });
 
-async function main() {
-    let continueAsking = true;
-
-    while (continueAsking) {
-    
-        readline.question("Ask anything (type q to quit): ", async (prompt) => {
+async function askQuestion() {
+    return new Promise((resolve, reject) => {
+        readline.question("Ask anything (type q to quit): ", (prompt) => {
             if (prompt === "q") {
-                readline.close();
-                return;
+                resolve(false);
+            } else {
+                resolve(prompt);
             }
+        });
+    });
+}
 
-            readline.question("Enter the max number of tokens(length of output): ", async (max_tokens) => {
-                const response = await AIbrain.createCompletion({
-                    model: "text-davinci-003",
-                    prompt: prompt,
-                    max_tokens: parseInt(max_tokens),
-                    temperature: 0,
-                });
+async function getMaxTokens() {
+    return new Promise((resolve, reject) => {
+        readline.question("Enter the max number of tokens(length of output): ", (maxTokens) => {
+            resolve(maxTokens);
+        });
+    });
+}
 
-                const completion = response.data.choices[0].text;
-                console.log(completion);
+async function getCompletion(prompt, maxTokens) {
+    try {
+        const response = await AIbrain.createCompletion({
+            model: "text-davinci-003",
+            prompt: prompt,
+            max_tokens: parseInt(maxTokens),
+            temperature: 0,
+        });
 
-                readline.question("Do you want to continue asking questions? (y/n): ", (continueResponse) => {
-                    if (continueResponse === "n") {
-                        continueAsking = false;
-                        readline.close();
-                    }
-                });
-            });
-        }); 
+        if (!response || !response.data || !response.data.choices) {
+            throw new Error("Invalid response from API");
+        }
+
+        return response.data.choices[0].text;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function askToContinue() {
+    return new Promise((resolve, reject) => {
+        readline.question("Do you want to continue asking questions? (y/n): ", (continueResponse) => {
+            if (continueResponse === "n") {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
+
+async function main() {
+    while (true) {
+        const prompt = await askQuestion();
+        if (prompt === false) {
+            break;
+        }
+
+        const maxTokens = await getMaxTokens();
+        try {
+            const completion = await getCompletion(prompt, maxTokens);
+            console.log(completion);
+        } catch (error) {
+            console.error(error);
+        }
+
+        const shouldContinue = await askToContinue();
+        if (!shouldContinue) {
+            break;
+        }
     }
 }
 
 main();
+
+        
