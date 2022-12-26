@@ -16,7 +16,8 @@ async function askQuestion() {
     return new Promise((resolve, reject) => {
         readline.question("Ask anything (type q to quit): ", (prompt) => {
             if (prompt === "q") {
-                resolve(false);
+                readline.close();
+                process.exit();
             } else {
                 resolve(prompt);
             }
@@ -55,7 +56,8 @@ async function askToContinue() {
     return new Promise((resolve, reject) => {
         readline.question("Do you want to continue asking questions? (y/n): ", (continueResponse) => {
             if (continueResponse === "n") {
-                resolve(false);
+                readline.close();
+                process.exit();
             } else {
                 resolve(true);
             }
