@@ -9,12 +9,13 @@ const AIbrain = new OpenAIApi(configuration);
 async function main() {
     const response = await AIbrain.createCompletion({
         model: "text-davinci-003",
-        prompt: "Say this is a test",
-        max_tokens: 7,
+        prompt: "Write me a tutorial on setting up GPT-3 API",
+        max_tokens: 250,
         temperature: 0,
     });
 
-    console.log(response)
+    const completion = response.data.choices[0].text
+    console.log(completion)
 }
 
-main()
+main();
