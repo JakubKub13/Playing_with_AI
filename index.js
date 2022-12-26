@@ -12,8 +12,6 @@ const readline = require("readline").createInterface({
 });
 
 async function main() {
-    while (true) {
-
     readline.question("Ask anything (type q to quit): ", async (prompt) => {
         if (prompt === "q") {
             readline.close();
@@ -24,7 +22,7 @@ async function main() {
             const response = await AIbrain.createCompletion({
                 model: "text-davinci-003",
                 prompt: prompt,
-                max_tokens: 50,
+                max_tokens: parseInt(max_tokens),
                 temperature: 0,
             });
 
@@ -32,7 +30,6 @@ async function main() {
             console.log(completion);
         });
     }); 
-  }
 }
 
 main();
